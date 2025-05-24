@@ -22,16 +22,15 @@ const CartPage = () => {
         });
     };
 
-    const onClickRemove = (book) => {
-        if(window.confirm(`Do you want to delete "${book.title}"?`)){
-            remove(ref(db, `cart/${uid}/${book.isbn}`));
-            alert(`${book.title} removed!`);
-        }
-    }
-
     useEffect(() => {
         getCart();
     }, []);
+
+    const onClickRemove = (book) => {
+        if(window.confirm(`'Do you want to delete ${book.title}'?`)) {
+            remove(ref(db, `cart/${uid}/${book.isbn}`));
+        }
+    };
 
     if(loading) return <h1 className='my-5 text-center'>Loading...</h1>
 
@@ -44,19 +43,21 @@ const CartPage = () => {
                         <td></td>
                         <td>Title</td>
                         <td>Add date</td>
-                        <td>Delete</td>
+                        <td>Detele</td>
                     </tr>
                 </thead>
                 <tbody>
-                    {books.map(book => {
+                    {books.map(book => 
                         <tr key={book.isbn}>
-                            <td width="50"><BookPage book={book} /></td>
+                            <td width={50}><BookPage book={book}/></td>
                             <td>{book.title}</td>
                             <td>{book.date}</td>
-                            <td><Button onClick={() => onClickRemove(book)}
-                                size='sm' variant='outling-danger' />Delete</td>
+                            <td>
+                                <Button onClick={() => onClickRemove(book)}
+                                    size='sm' variant='outline-danger'>Delete</Button>
+                            </td>
                         </tr>
-                    })}
+                    )}
                 </tbody>
             </Table>
         </div>
