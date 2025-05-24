@@ -1,8 +1,18 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react'
 import { Button, Card, Col, Form, InputGroup, Row } from 'react-bootstrap';
+import { BsCartPlus } from 'react-icons/bs';
+import { app } from '../firebase';
+import { getDatabase, ref, set, get } from 'firebase/database';
+import { useNavigate } from 'react-router-dom';
+import moment from 'moment';
 
 const HomePage = () => {
+    const db = getDatabase(app);
+    const [isLoading, setIsLoading] = useState(false);
+    const uid = sessionStorage.getItem('uid');
+    const navi = useNavigate();
+
     const [documents, setDocuments] = useState([]);
     const [query, setQuery] = useState('react');
     const [page, setPage] = useState(1);
@@ -39,6 +49,25 @@ const HomePage = () => {
         }
     };
 
+    const onClickCart = (book) => {
+        if(uid) {
+            get(ref(db, `cart/${uid}/${book.isbn}`))
+            .then(snapshot => {
+                if(snapshot.exists()) {
+                    alert('This book already exists.');
+                } else {
+                    const date = moment(new Date()).format('YYYY-MM-DD HH:mm-ss');
+                    set(ref(db, `cart/${uid}/${book.isbn}`), {...book, date});
+                    alert('book has been added!');
+                }
+            });
+        } else {
+            navi('/login');
+        }
+    }
+
+    if(isLoading) return <h1 className='text-center my-5'>Loading...</h1>
+
     return (
         <div>
             <h1 className='my-5 text-center'>HomePage</h1>
@@ -66,7 +95,10 @@ const HomePage = () => {
                             </Card.Body>
                             <Card.Footer>
                                 <div className='text-truncate'>{doc.title}</div>
-                                <div>{doc.sale_price}원</div>
+                                <Row>
+                                    <Col>{doc.sale_price}원</Col>
+                                    <Col className='text-end cart'><BsCartPlus onClick={() => onClickCart(doc)}/></Col>
+                                </Row>
                             </Card.Footer>
                         </Card>                        
                     </Col>

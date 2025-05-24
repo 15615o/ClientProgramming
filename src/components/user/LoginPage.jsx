@@ -1,7 +1,14 @@
-import React, { useState } from 'react'
-import { Button, Card, Col, Form, Row } from 'react-bootstrap'
+import React, { useState } from 'react';
+import { Button, Card, Col, Form, Row } from 'react-bootstrap';
+import { app } from '../../firebase';
+import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
+import { useNavigate } from 'react-router-dom';
 
 const LoginPage = () => {
+    const auth = getAuth(app); // firebase 인증
+    const navi = useNavigate();
+    const [isLoading, setIsLoading] = useState(false);
+
     const basename = process.env.PUBLIC_URL;
     const [form, setForm] = useState({
         email: 'blue@inha.com',
@@ -22,9 +29,23 @@ const LoginPage = () => {
         if(email === '' || pass === ''){
             alert('Please type your Email or Password!');
         } else {
-            // 로그인 체크
+            setIsLoading(true);
+            signInWithEmailAndPassword(auth, email, pass)
+            .then(success => {
+                alert("Login success!");
+                sessionStorage.setItem('email', email)
+                sessionStorage.setItem('uid', success.user.uid);
+                setIsLoading(false);
+                navi('/');
+            })
+            .catch(error => {
+                alert("Login error: " + error.message);
+                setIsLoading(false);
+            });
         }
     };
+
+    if(isLoading) return <h1 className="my-5 text-center">Loading...</h1>
 
     return (
         <div>

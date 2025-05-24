@@ -1,7 +1,13 @@
 import React, { useState } from 'react'
 import { Button, Card, Col, Form, Row } from 'react-bootstrap'
+import { app } from '../../firebase';
+import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth';
+import { useNavigate } from 'react-router-dom';
 
 const JoinPage = () => {
+    const auth = getAuth(app); // firebase 인증
+    const navi = useNavigate();
+    const [isLoading, setIsLoading] = useState(false);
     const [form, setForm] = useState({
         email: 'green@inha.com',
         pass: '12341234'
@@ -22,8 +28,23 @@ const JoinPage = () => {
             alert('Please type your Email or Password!');
         } else {
             // 회원가입
+            if(window.confirm("Do you want to join?")){
+                setIsLoading(true);
+                createUserWithEmailAndPassword(auth, email, pass)
+                .then(success => {
+                    setIsLoading(true);
+                    alert('Join success!');
+                    navi('/');
+                })
+                .catch(error => {
+                    setIsLoading(true);
+                    alert('Join error: ' + error.message);
+                });
+            }
         }
     }
+
+    if(isLoading) return <h1 className="my-5 text-center">Loading...</h1>
 
     return (
         <div>
