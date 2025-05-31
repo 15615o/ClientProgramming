@@ -3,6 +3,7 @@ import { app } from '../../firebase'
 import { getDatabase, ref, onValue, remove } from 'firebase/database'
 import { Button, Table } from 'react-bootstrap';
 import BookPage from '../BookPage';
+import { FaSpinner } from "react-icons/fa";
 
 const CartPage = () => {
     const uid = sessionStorage.getItem('uid');
@@ -32,7 +33,7 @@ const CartPage = () => {
         }
     };
 
-    if(loading) return <h1 className='my-5 text-center'>Loading...</h1>
+    if(loading) return <h1 className='spin my-5 text-center'><FaSpinner/></h1>
 
     return (
         <div>

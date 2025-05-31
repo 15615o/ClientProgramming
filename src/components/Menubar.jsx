@@ -1,14 +1,12 @@
 import Container from 'react-bootstrap/Container';
 import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
-import MainRouter from './MainRouter';
+import MainRouter from '../router/MainRouter';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { onLog } from 'firebase/app';
 
 const Menubar = () => {
     const navi = useNavigate();
     const email = sessionStorage.getItem('email');
-    const uid = sessionStorage.getItem('uid');
     const location = useLocation();
     const {pathname} = location;
     const basename = process.env.PUBLIC_URL;
@@ -33,6 +31,7 @@ const Menubar = () => {
                             navbarScroll>
                             <Nav.Link href={`${basename}/`} active={pathname === '/' && true}>Home</Nav.Link>
                             <Nav.Link href={`${basename}/cart`} active={pathname === '/cart' && true}>Cart</Nav.Link>
+                            <Nav.Link href={`${basename}/post`} active={pathname === '/post' && true}>Post</Nav.Link>
                         </Nav>
                         <Nav>
                             {email ?

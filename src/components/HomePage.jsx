@@ -3,9 +3,13 @@ import React, { useEffect, useState } from 'react'
 import { Button, Card, Col, Form, InputGroup, Row } from 'react-bootstrap';
 import { BsCartPlus } from 'react-icons/bs';
 import { app } from '../firebase';
-import { getDatabase, ref, set, get } from 'firebase/database';
+import { getDatabase, ref, set, get, onValue, remove } from 'firebase/database';
 import { useNavigate } from 'react-router-dom';
 import moment from 'moment';
+import { FaHeart, FaRegHeart } from "react-icons/fa";
+import { FaSpinner } from "react-icons/fa";
+import BookPage from './BookPage';
+
 
 const HomePage = () => {
     const db = getDatabase(app);
@@ -17,6 +21,7 @@ const HomePage = () => {
     const [query, setQuery] = useState('react');
     const [page, setPage] = useState(1);
     const [last, setLast] = useState(1);
+    const [heart, setHeart] = useState([]);
 
     const callAPI = async () => {
         const url = "https://dapi.kakao.com/v3/search/book?target=title";
@@ -37,7 +42,7 @@ const HomePage = () => {
 
     useEffect(() => {
         callAPI();
-    }, [page])
+    }, [page]);
 
     const onSubmit = (e) => {
         e.preventDefault();
@@ -66,7 +71,36 @@ const HomePage = () => {
         }
     }
 
-    if(isLoading) return <h1 className='text-center my-5'>Loading...</h1>
+    const onClickHeart = (book) => {
+        remove(ref(db, `heart/${uid}/${book.isbn}`));
+        alert('Like canceled!');
+    }
+
+    const onClickRegHeart = (book) => {
+        if(uid){
+            set(ref(db, `heart/${uid}/${book.isbn}`), book);
+        } else {
+            navi('/login');
+        }
+    }
+
+    const checkHeart = () => {
+        setIsLoading(true);
+        onValue(ref(db, `heart/${uid}`), snapshot => {
+            const rows = [];
+            snapshot.forEach(row => {
+                rows.push(row.val().isbn);
+            });
+            setHeart(rows);
+            setIsLoading(false);
+        });
+    }
+
+    useEffect(() => {
+        checkHeart();
+    }, []);
+
+    if(isLoading) return <h1 className='spin text-center my-5'><FaSpinner/></h1>
 
     return (
         <div>
@@ -91,7 +125,14 @@ const HomePage = () => {
                     <Col lg={2} md={3} xs={6} className='mb-2'>
                         <Card>
                             <Card.Body>
-                                <img src={doc.thumbnail} width="100%"/>
+                                <BookPage book={doc}/>
+                                <div className="heart text-end">
+                                    {heart.includes(doc.isbn) ?
+                                        <FaHeart onClick={() => onClickHeart(doc)} />
+                                        :
+                                        <FaRegHeart onClick={() => onClickRegHeart(doc)} />
+                                    }
+                                </div>
                             </Card.Body>
                             <Card.Footer>
                                 <div className='text-truncate'>{doc.title}</div>

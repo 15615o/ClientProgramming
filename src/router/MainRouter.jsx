@@ -1,10 +1,11 @@
 import React from 'react'
 import { Container } from 'react-bootstrap'
 import { Route, Routes } from 'react-router-dom'
-import HomePage from './HomePage'
-import CartPage from './user/CartPage'
-import LoginPage from './user/LoginPage'
-import JoinPage from './user/JoinPage'
+import PostRouter from './PostRouter'
+import HomePage from '../components/HomePage'
+import CartPage from '../components/user/CartPage'
+import LoginPage from '../components/user/LoginPage'
+import JoinPage from '../components/user/JoinPage'
 
 const MainRouter = () => {
     return (
@@ -14,6 +15,8 @@ const MainRouter = () => {
                 <Route path='/cart' element={<CartPage/>}/>
                 <Route path='/login' element={<LoginPage/>}/>
                 <Route path='/join' element={<JoinPage/>}/>
+                
+                <Route path='/post/*' element={<PostRouter/>}/>
             </Routes>
         </Container>
     )

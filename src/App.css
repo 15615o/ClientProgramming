@@ -2,3 +2,22 @@
     cursor: pointer;
     font-size: 20px;
 }
+
+.heart{
+    color: red;
+    cursor: pointer;
+    font-size: 20px;
+}
+
+.spin{
+    animation: spin 1s infinite linear;
+}
+
+@keyframes spin {
+    from {
+        transform: scale(1) rotate(0deg);
+    }
+    to {
+        transform: scale(1) rotate(360deg);
+    }
+}
