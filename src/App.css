@@ -21,3 +21,10 @@
         transform: scale(1) rotate(360deg);
     }
 }
+
+.textarea{
+    width: 100%;
+    outline: none;
+    border: none;
+    border-bottom: 1px solid gray;
+}
